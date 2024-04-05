@@ -1,0 +1,48 @@
+import SwiftUI
+
+struct AuthenticationRootView: View {
+    @EnvironmentObject var authManager: AuthManager
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
+    @State private var showAuthFlow = false
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                AuthenticationTopView()
+                
+                Spacer()
+                
+                AuthenticationBottomView()
+            }
+            .background(gradientBackground)
+            .onChange(of: authManager.authType, { oldValue, newValue in
+                showAuthFlow = newValue != nil
+            })
+            .fullScreenCover(isPresented: $showAuthFlow) {
+                EmailView()
+                    .environmentObject(authManager)
+                    .environmentObject(authViewModel)
+            }
+        }
+    }
+}
+
+private extension AuthenticationRootView {
+    var gradientBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(.tertiaryPink),
+                Color(.primaryPink),
+                Color(.secondaryPink)
+            ],
+            startPoint: .topTrailing,
+            endPoint: .bottomLeading
+        )
+    }
+}
+
+#Preview {
+    AuthenticationRootView()
+        .environmentObject(AuthManager(service: MockAuthService()))
+}

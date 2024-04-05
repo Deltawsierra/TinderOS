@@ -1,0 +1,28 @@
+import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
+}
+
+@main
+struct TinderApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    @StateObject var userManager = UserManager(service: UserService())
+    @StateObject var authmanager = AuthManager(service: AuthService())
+    @StateObject var matchManager = MatchManager(service: MatchService())
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(userManager)
+                .environmentObject(authmanager)
+                .environmentObject(matchManager)
+        }
+    }
+}
